@@ -1,0 +1,10 @@
+venv
+.venv
+env
+.env
+*.pot
+*.py[co]
+__pycache__
+.idea
+docker.env
+*.egg-info
