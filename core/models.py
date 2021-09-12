@@ -23,3 +23,10 @@ class BaseModel(models.Model):
     @classmethod
     def get_all(cls):
         return cls.objects.all()
+
+
+class Branch(BaseModel):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from core.models import Branch
+from core.serializers import BranchSerializer
+
+
+class BranchViewSet(viewsets.ModelViewSet):
+    queryset = Branch.get_all()
+    serializer_class = BranchSerializer
