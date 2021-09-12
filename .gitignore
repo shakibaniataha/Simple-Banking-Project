@@ -8,3 +8,4 @@ __pycache__
 .idea
 docker.env
 *.egg-info
+banking/settings_local.py
