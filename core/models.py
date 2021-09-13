@@ -34,6 +34,8 @@ class BaseUserModel(AbstractBaseUser):
     username = models.CharField(max_length=255, unique=True)
     USERNAME_FIELD = 'username'
 
+    objects = models.Manager()
+
     class Meta:
         abstract = True
 
@@ -50,6 +52,8 @@ class BaseUserModel(AbstractBaseUser):
 
 
 class Customer(BaseUserModel):
+    phone_number = models.CharField(max_length=255)
+
     @property
     def is_customer(self):
         return True
