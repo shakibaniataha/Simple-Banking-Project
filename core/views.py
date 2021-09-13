@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, generics
 from rest_framework.response import Response
 
 from core.models import Branch
@@ -8,7 +8,6 @@ from core.serializers import BranchSerializer, CustomerRegistrationSerializer, C
 class BranchViewSet(viewsets.ModelViewSet):
     queryset = Branch.get_all()
     serializer_class = BranchSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
 
 class CustomerRegistrationView(generics.GenericAPIView):
