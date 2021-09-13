@@ -66,6 +66,7 @@ class Clerk(models.Model):
 
 class Branch(BaseModel):
     name = models.CharField(max_length=255)
+    clerk = models.OneToOneField(Clerk, on_delete=models.PROTECT, default=None)
 
     class Meta:
         verbose_name_plural = 'Branches'
