@@ -1,5 +1,8 @@
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin, UserManager
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.utils import timezone
 from rest_framework.exceptions import NotFound
 
 
@@ -26,43 +29,40 @@ class BaseModel(models.Model):
         return cls.objects.all()
 
 
-class BaseUserModel(AbstractBaseUser):
+class BaseUserModel(AbstractBaseUser, PermissionsMixin):
+    username_validator = UnicodeUsernameValidator()
+
     id = models.BigAutoField(primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=255)
-    username = models.CharField(max_length=255, unique=True)
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255, blank=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    username = models.CharField(max_length=255, unique=True, validators=[username_validator],
+                                error_messages={
+                                    'unique': "A user with that username already exists.",
+                                })
     USERNAME_FIELD = 'username'
 
-    objects = models.Manager()
+    objects = UserManager()
 
     class Meta:
-        abstract = True
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
 
     def __str__(self):
         return self.username
 
-    @property
-    def is_customer(self):
-        return False
 
-    @property
-    def is_clerk(self):
-        return False
-
-
-class Customer(BaseUserModel):
+class Customer(models.Model):
+    user = models.OneToOneField(BaseUserModel, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=255)
 
-    @property
-    def is_customer(self):
-        return True
 
-
-class Clerk(BaseUserModel):
-    @property
-    def is_clerk(self):
-        return True
+class Clerk(models.Model):
+    user = models.OneToOneField(BaseUserModel, on_delete=models.CASCADE)
 
 
 class Branch(BaseModel):
