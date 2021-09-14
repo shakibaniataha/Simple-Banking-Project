@@ -84,6 +84,10 @@ class Account(BaseModel):
     is_active = models.BooleanField(default=True)
     balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
+    def close(self):
+        self.is_active = False
+        self.save()
+
 
 class Transaction(BaseModel):
     from_account = models.ForeignKey(Account, on_delete=models.PROTECT, related_name='debits')

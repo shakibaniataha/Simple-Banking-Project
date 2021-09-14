@@ -1,14 +1,6 @@
 from rest_framework import serializers
 
-from core.models import Branch, Customer, BaseUserModel
-
-
-class BranchSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Branch
-        fields = (
-            'name',
-        )
+from core.models import Branch, Customer, BaseUserModel, Account, Clerk
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,6 +12,27 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'username',
             'created_at',
+        )
+
+
+class ClerkSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Clerk
+        fields = (
+            'user',
+        )
+
+
+class BranchSerializer(serializers.ModelSerializer):
+    clerk = ClerkSerializer(read_only=True)
+
+    class Meta:
+        model = Branch
+        fields = (
+            'name',
+            'clerk',
         )
 
 
@@ -56,4 +69,24 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = (
             'user',
             'phone_number',
+        )
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    customer = CustomerSerializer(read_only=True)
+    customer_id = serializers.IntegerField(write_only=True)
+    branch = BranchSerializer(read_only=True)
+    branch_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Account
+        fields = (
+            'id',
+            'customer',
+            'customer_id',
+            'branch',
+            'branch_id',
+            'is_active',
+            'balance',
+            'created_at',
         )
