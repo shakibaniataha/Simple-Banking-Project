@@ -18,7 +18,7 @@ class ClerkAdmin(admin.ModelAdmin):
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'username', 'branch', 'balance', 'is_active']
 
 
 @admin.register(Customer)

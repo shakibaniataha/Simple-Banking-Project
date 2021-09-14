@@ -11,5 +11,14 @@ urlpatterns = [
     })),
     path('customer/accounts/close/', views.CustomerAccountViewSet.as_view({
         'post': 'close_account',
-    }))
+    })),
+    path('customer/accounts/transfer/', views.CustomerAccountViewSet.as_view({
+        'post': 'transfer',
+    })),
+    path('customer/accounts/deposit/', views.CustomerAccountViewSet.as_view({
+        'post': 'deposit',
+    })),
+    path('customer/accounts/withdraw/', views.CustomerAccountViewSet.as_view({
+        'post': 'withdraw',
+    })),
 ]

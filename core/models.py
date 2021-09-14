@@ -6,6 +6,7 @@ from django.db import models
 from datetime import timedelta
 from rest_framework.exceptions import NotFound
 from . import const
+from decimal import Decimal
 
 
 class BaseModel(models.Model):
@@ -77,8 +78,23 @@ class Customer(models.Model):
     user = models.OneToOneField(BaseUserModel, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=255)
 
+    @property
+    def has_active_account(self):
+        if hasattr(self, 'account') and self.account.is_active:
+            return True
+
+        return False
+    
+    def can_withdraw(self, amount):
+        return bool(self.has_active_account and self.account.balance >= Decimal.from_float(float(amount)))
+    
+    def can_deposit(self):
+        return self.has_active_account
+    
 
 class Account(BaseModel):
+    # TODO: Create a uuid field to use for transactions
+
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='accounts')
     is_active = models.BooleanField(default=True)
@@ -87,6 +103,18 @@ class Account(BaseModel):
     def close(self):
         self.is_active = False
         self.save()
+        
+    def withdraw(self, amount):
+        self.balance -= Decimal.from_float(float(amount))
+        self.save()
+
+    def deposit(self, amount):
+        self.balance += Decimal.from_float(float(amount))
+        self.save()
+
+    @property
+    def username(self):
+        return self.customer.user.username
 
 
 class Transaction(BaseModel):
